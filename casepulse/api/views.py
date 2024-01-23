@@ -13,6 +13,40 @@ from rest_framework import generics
 # from rest_framework import permissions
 # from rest_framework.decorators import permission_classes
 # from rest_framework.permissions import IsAuthenticated
+# from django.contrib.auth.decorators import login_required
+
+#################################Users API'S#################################
+class RegistrationView(generics.CreateAPIView):
+    serializer_class = RegisterationSerializer
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        user.first_name = self.request.data.get('first_name')
+        user.last_name = self.request.data.get('last_name')
+        user.phone_number = self.request.data.get('phone_number')
+        user.email = self.request.data.get('email')
+        user.avatar = self.request.data.get('avatar')
+
+        user.save()
+
+class LawyersList(generics.ListAPIView):
+    queryset = Lawyer.objects.all()
+    serializer_class = LawyerSerializer
+
+class LawyersDetail(generics.RetrieveAPIView):
+    queryset = Lawyer.objects.all()
+    serializer_class = LawyerSerializer
+
+class LawyersUpdateOne(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Lawyer.objects.all()
+    serializer_class = LawyerSerializer
+
+class LawyersCreate(generics.CreateAPIView):
+    queryset = Lawyer.objects.all()
+    serializer_class = LawyerSerializer
+class LawyersDelete(generics.DestroyAPIView):
+    queryset = Lawyer.objects.all()
+    serializer_class = LawyerSerializer
 
 #################################Reminders API'S#################################
 class RemindersList(generics.ListAPIView):
@@ -40,7 +74,13 @@ class RemindersToday(generics.ListAPIView):
 
     def get_queryset(self):
         today = timezone.now().date()
-        return Reminder.objects.filter(date__date=today)
+        user = self.request.user
+
+        return Reminder.objects.filter(
+            date__date=today,
+            case_id__lawyer__user=user
+        )
+
 
 #################################Document API'S#################################
     
@@ -48,6 +88,13 @@ class DocumentsList(generics.ListAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
+class CaseDocumentsList(generics.ListAPIView):
+    serializer_class = DocumentSerializer
+
+    def get_queryset(self):
+        case_id = self.kwargs.get('pk')  # 'pk' is the default name for the primary key parameter in the URL
+        return Document.objects.filter(case_id=case_id)
+    
 class DocumentsDetail(generics.RetrieveAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
@@ -70,6 +117,16 @@ class CasesList(generics.ListAPIView):
     queryset = Case.objects.all()
     serializer_class = CaseSerializer
 
+class UserCasesList(generics.ListAPIView):
+    queryset = Case.objects.all()
+    serializer_class = CaseSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Case.objects.filter(
+            lawyer__user=user
+        )
+
 class CasesDetail(generics.RetrieveAPIView):
     queryset = Case.objects.all()
     serializer_class = CaseSerializer
@@ -81,6 +138,21 @@ class CasesUpdateOne(generics.RetrieveUpdateDestroyAPIView):
 class CasesCreate(generics.CreateAPIView):
     queryset = Case.objects.all()
     serializer_class = CaseSerializer
+
+    def perform_create(self, serializer):
+        # Calling the saved Case and making it as instance 
+        case_instance = serializer.save()
+
+        # Get the user id
+        user = self.request.user
+
+        # Get the Lawyer instance associated with the user
+        lawyer_instance = Lawyer.objects.get(user=user)
+
+        # Add the Case instance to the many-to-many relationship
+        lawyer_instance.cases.add(case_instance)
+        
+        lawyer_instance.save()
 
 class CasesDelete(generics.DestroyAPIView):
     queryset = Case.objects.all()

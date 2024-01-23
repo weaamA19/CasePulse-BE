@@ -5,6 +5,13 @@ from . import views
 
 urlpatterns = [
     
+   #################################Users URLS#################################
+    path('auth/register/', views.RegistrationView.as_view()),
+    path('lawyers/', views.LawyersList.as_view()),
+    path('lawyers/create/', views.LawyersCreate.as_view()),
+    path('lawyers/<int:pk>/update', views.LawyersUpdateOne.as_view()),
+    path('lawyers/<int:pk>/', views.LawyersDetail.as_view()),
+    path('lawyers/<int:pk>/delete', views.LawyersDelete.as_view()),
 
    #################################Reminders URLS#################################
 
@@ -23,10 +30,12 @@ urlpatterns = [
     path('documents/<int:pk>/', views.DocumentsDetail.as_view()),
     path('documents/create/', views.DocumentsCreate.as_view()),
     path('documents/<int:pk>/delete', views.DocumentsDelete.as_view()),
+    path('cases/<int:pk>/documents/', views.CaseDocumentsList.as_view()),
 
 
     #################################Case URLS#################################
     path('cases/', views.CasesList.as_view()),
+    path('usercases/', views.UserCasesList.as_view()),
     path('cases/<int:pk>/update', views.CasesUpdateOne.as_view()),
     path('cases/<int:pk>/', views.CasesDetail.as_view()),
     path('cases/create/', views.CasesCreate.as_view()),

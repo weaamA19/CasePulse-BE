@@ -1,7 +1,9 @@
 from django.db import models
 from django.urls import reverse
 from datetime import date
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser,User
+
+
 
 # Create your models here.
 Active = 'A'
@@ -15,8 +17,8 @@ class Case(models.Model):
   title = models.CharField(max_length=100)
   description = models.TextField(max_length=250, blank=True, null=True)
   status = models.CharField(max_length=1, choices=Active_InActive, default=Active)
-  clientCPR = models.IntegerField(default=000000000)
-  clientEmail = models.EmailField(default='example@example.com')
+  clientCPR = models.CharField(max_length=9)
+  clientEmail = models.EmailField()
   case_start_date = models.DateTimeField(auto_now_add=True)
   case_end_date = models.DateTimeField(blank=True, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
@@ -28,14 +30,30 @@ class Case(models.Model):
   def get_absolute_url(self):
     return reverse('case_details', kwargs={'case_id': self.id})
 
-class Lawyer(models.Model):
-  user = models.OneToOneField(User, on_delete=models.CASCADE)
-  phoneNumber = models.TextField(max_length=250)
+# User Model
+class Lawyer(AbstractUser):
+  first_name = models.CharField(max_length=100, blank=False, null=False)
+  last_name = models.CharField(max_length=100,blank=False, null=False)
+  # userName = models.CharField(max_length=100, unique=True)
+  phone_number = models.CharField(max_length=20, blank=False, null=False)
+  email_address = models.EmailField(blank=False, null=False)
   avatar = models.ImageField(upload_to='api/static/uploads', default="default.png")
   cases = models.ManyToManyField(Case)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  USERNAME_FIELD = 'username'
+  REQUIRED_FIELDS  = ['phoneNumber', 'email', 'firstName', 'email_address']
+  def __str__(self):
+    return self.username
 
-  def get_absolute_url(self):
-    return reverse('lawyer_details', kwargs={'lawyer_id': self.id})
+# class Lawyer(models.Model):
+#   user = models.OneToOneField(User, on_delete=models.CASCADE)
+#   phoneNumber = models.TextField(max_length=250)
+#   avatar = models.ImageField(upload_to='api/static/uploads', default="default.png")
+#   cases = models.ManyToManyField(Case)
+
+#   def get_absolute_url(self):
+#     return reverse('lawyer_details', kwargs={'lawyer_id': self.id})
   
 
 class Reminder(models.Model):
