@@ -37,7 +37,7 @@ class Lawyer(AbstractUser):
   # userName = models.CharField(max_length=100, unique=True)
   phone_number = models.CharField(max_length=20, blank=False, null=False)
   email_address = models.EmailField(blank=False, null=False)
-  avatar = models.ImageField(upload_to='api/static/uploads', default="default.png")
+  avatar = models.ImageField(upload_to='api/static/uploads', default="api/static/uploads/default.png")
   cases = models.ManyToManyField(Case)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)

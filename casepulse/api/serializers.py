@@ -6,7 +6,13 @@ class CaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Case
         fields = ['title','description', 'status', 'clientCPR', 'clientEmail', 'case_start_date', 'case_end_date']
+   
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['id'] = instance.id
+        return rep
 
+        
 # class UserSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = User
@@ -26,14 +32,41 @@ class ReminderSerializer(serializers.ModelSerializer):
         model = Reminder
         fields = ['case_id','title','description', 'date']
     
+# class DocumentSerializer(serializers.ModelSerializer):
+#     # Nested serializer for the case_id field
+#     case_id = CaseSerializer()
+#     class Meta:
+#         model = Document
+#         fields = ['case_id','title','description', 'file_path']
+        
 class DocumentSerializer(serializers.ModelSerializer):
-    # Nested serializer for the case_id field
-    case_id = CaseSerializer()
+    case_id = serializers.SerializerMethodField()  
+
     class Meta:
         model = Document
-        fields = ['case_id','title','description', 'file_path']
+        fields = ['case_id', 'title', 'description', 'file_path', 'created_at', 'updated_at']
+        read_only_fields = ['case_id']
 
+    def get_case_id(self, obj):
+        return self.context.get('case_id', None)  
+    
+    def create(self, validated_data):
+        case_id = self.get_case_id(self.context)
+        validated_data['case_id_id'] = case_id
+        return super().create(validated_data)
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['id'] = instance.id
+        return rep
+    
+
+   
+    # def create(self, validated_data):
+    #     case_id = self.context['view'].kwargs['pk']
+    #     case = Case.objects.get(pk=case_id)
+    #     validated_data['case_id'] = case_id
+    #     return super().create(validated_data)
 
 class RegisterationSerializer(serializers.ModelSerializer):
     class Meta:

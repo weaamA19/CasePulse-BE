@@ -23,7 +23,6 @@ urlpatterns = [
     path('reminders/<int:pk>/delete', views.RemindersDelete.as_view()),
     path('reminders/today', views.RemindersToday.as_view()),
 
-
     #################################Document URLS#################################
     path('documents/', views.DocumentsList.as_view()),
     path('documents/<int:pk>/update', views.DocumentsUpdateOne.as_view()),
@@ -31,6 +30,7 @@ urlpatterns = [
     path('documents/create/', views.DocumentsCreate.as_view()),
     path('documents/<int:pk>/delete', views.DocumentsDelete.as_view()),
     path('cases/<int:pk>/documents/', views.CaseDocumentsList.as_view()),
+    path('cases/<int:pk>/documents/create/', views.CaseDocumentsCreate.as_view()),    
 
 
     #################################Case URLS#################################

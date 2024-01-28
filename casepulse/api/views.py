@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 # from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 # from rest_framework import permissions
 # from rest_framework.decorators import permission_classes
@@ -78,9 +80,9 @@ class RemindersToday(generics.ListAPIView):
 
         return Reminder.objects.filter(
             date__date=today,
-            case_id__lawyer__user=user
+            case_id__lawyer__username=user.username
         )
-
+    
 
 #################################Document API'S#################################
     
@@ -92,9 +94,20 @@ class CaseDocumentsList(generics.ListAPIView):
     serializer_class = DocumentSerializer
 
     def get_queryset(self):
-        case_id = self.kwargs.get('pk')  # 'pk' is the default name for the primary key parameter in the URL
+        case_id = self.kwargs['pk']
         return Document.objects.filter(case_id=case_id)
-    
+
+class CaseDocumentsCreate(generics.CreateAPIView):
+    serializer_class = DocumentSerializer
+
+    def create(self, request, *args, **kwargs):
+        case_id = kwargs.get('pk')
+        serializer = self.get_serializer(data=request.data, context={'case_id': case_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 class DocumentsDetail(generics.RetrieveAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
@@ -123,10 +136,11 @@ class UserCasesList(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        print(self.request.user)
         return Case.objects.filter(
-            lawyer__user=user
+            lawyer__username=user.username
         )
-
+    
 class CasesDetail(generics.RetrieveAPIView):
     queryset = Case.objects.all()
     serializer_class = CaseSerializer
@@ -144,10 +158,10 @@ class CasesCreate(generics.CreateAPIView):
         case_instance = serializer.save()
 
         # Get the user id
-        user = self.request.user
+        user = self.request.user.username
 
         # Get the Lawyer instance associated with the user
-        lawyer_instance = Lawyer.objects.get(user=user)
+        lawyer_instance = Lawyer.objects.get(username=user)
 
         # Add the Case instance to the many-to-many relationship
         lawyer_instance.cases.add(case_instance)
@@ -194,34 +208,3 @@ class CaseActive(generics.UpdateAPIView):
             return JsonResponse({"code": 500, "data": str(e)})
 
 
-
-
-
-
-
-
-
-
-
-
-
-#################################First Approach#################################    
-# class Reminders(APIView):
-#     def get(self, request):
-#         reminders = Reminder.objects.all()
-#         serialized_reminders = ReminderSerializer(reminders, many=True).data
-#         return Response(serialized_reminders)
-
-#     def post(self, request):
-#         serializer = ReminderSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             return Response(serializer.data)
-
-# @api_view(['GET'])
-#@permission_classes([IsAuthenticated])
-# def reminders_index(request):
-#     # reminders = Reminder.objects.filter()
-#     reminders = Reminder.objects.all()
-#     serializer = ReminderSerializer(reminders, many=True)
-#     return JsonResponse(serializer.data, safe=False)
