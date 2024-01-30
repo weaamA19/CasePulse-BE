@@ -88,17 +88,35 @@ class RemindersDelete(generics.DestroyAPIView):
     queryset = Reminder.objects.all()
     serializer_class = ReminderSerializer
 
+
 class RemindersToday(generics.ListAPIView):
-    serializer_class = ReminderSerializer
+    serializer_class = TodayReminderSerializer
 
     def get_queryset(self):
         today = timezone.now().date()
-        user = self.request.user
+        user = self.request.user.username
 
         return Reminder.objects.filter(
-            date__date=today,
-            case_id__lawyer__username=user.username
-        )
+            datetime__date=today,
+            case_id__lawyer__username=user
+        ).order_by('datetime')
+
+    #The following function help to overcome the error "case_id:null" for reminders with same case_id
+    # def get_serializer_context(self):
+    #     # Get the case_id from the queryset
+    #     case_id = self.get_queryset().first().case_id_id if self.get_queryset().exists() else None
+    #     return {'case_id': case_id}
+    
+    #The following function help to overcome the error "case_id:null" for reminder of different case_id
+    def get_serializer_context(self):
+        # Get the queryset of reminders
+        queryset = self.get_queryset()
+
+        # Create a dictionary mapping reminder id to its case_id
+        reminder_case_ids = {reminder.id: reminder.case_id_id for reminder in queryset}
+
+        # Return the mapping in the serializer context
+        return {'reminder_case_ids': reminder_case_ids}
     
 class CaseRemindersList(generics.ListAPIView):
     serializer_class = ReminderSerializer

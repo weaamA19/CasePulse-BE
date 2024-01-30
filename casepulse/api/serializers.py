@@ -39,6 +39,25 @@ class ReminderSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
         rep['id'] = instance.id
         return rep
+
+
+
+class TodayReminderSerializer(serializers.ModelSerializer):
+    case_id = serializers.SerializerMethodField()  
+    class Meta:
+        model = Reminder
+        fields = ['case_id','title','description', 'datetime', 'created_at', 'updated_at']
+        read_only_fields = ['case_id']
+    
+    def get_case_id(self, obj):
+        reminder_id = obj.id
+        reminder_case_ids = self.context.get('reminder_case_ids', {})
+        return reminder_case_ids.get(reminder_id, None)
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['id'] = instance.id
+        return rep
      
 class DocumentSerializer(serializers.ModelSerializer):
     case_id = serializers.SerializerMethodField()  
