@@ -7,6 +7,7 @@ urlpatterns = [
     
    #################################Users URLS#################################
     path('auth/register/', views.RegistrationView.as_view()),
+    # path('password/verify/', OldPasswordVerificationView.as_view(), name='old-password-verify'),
     path('lawyers/', views.LawyersList.as_view()),
     path('lawyers/create/', views.LawyersCreate.as_view()),
     path('lawyers/<int:pk>/update', views.LawyersUpdateOne.as_view()),
@@ -22,6 +23,8 @@ urlpatterns = [
     path('reminders/create/', views.RemindersCreate.as_view()),
     path('reminders/<int:pk>/delete', views.RemindersDelete.as_view()),
     path('reminders/today', views.RemindersToday.as_view()),
+    path('cases/<int:pk>/reminders/', views.CaseRemindersList.as_view()),
+    path('cases/<int:pk>/reminders/create/', views.CaseRemindersCreate.as_view()),    
 
     #################################Document URLS#################################
     path('documents/', views.DocumentsList.as_view()),

@@ -11,10 +11,11 @@ from rest_framework.response import Response
 from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate
 
 # from rest_framework import permissions
 # from rest_framework.decorators import permission_classes
-# from rest_framework.permissions import IsAuthenticated
 # from django.contrib.auth.decorators import login_required
 
 #################################Users API'S#################################
@@ -31,6 +32,22 @@ class RegistrationView(generics.CreateAPIView):
 
         user.save()
 
+
+# class OldPasswordVerificationView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = OldPasswordVerificationSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         user = request.user
+#         old_password = serializer.validated_data['old_password']
+
+#         # Check if the old password is correct
+#         if not authenticate(username=user.username, password=old_password):
+#             return Response({'error': 'Incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         return Response({'message': 'Old password is correct'}, status=status.HTTP_200_OK)
 class LawyersList(generics.ListAPIView):
     queryset = Lawyer.objects.all()
     serializer_class = LawyerSerializer
@@ -83,6 +100,24 @@ class RemindersToday(generics.ListAPIView):
             case_id__lawyer__username=user.username
         )
     
+class CaseRemindersList(generics.ListAPIView):
+    serializer_class = ReminderSerializer
+
+    def get_queryset(self):
+        case_id = self.kwargs['pk']
+        return Reminder.objects.filter(case_id=case_id)
+
+class CaseRemindersCreate(generics.CreateAPIView):
+    serializer_class = ReminderSerializer
+
+    def create(self, request, *args, **kwargs):
+        case_id = kwargs.get('pk')
+        serializer = self.get_serializer(data=request.data, context={'case_id': case_id})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 #################################Document API'S#################################
     

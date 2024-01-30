@@ -12,12 +12,6 @@ class CaseSerializer(serializers.ModelSerializer):
         rep['id'] = instance.id
         return rep
 
-        
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields ='__all__' 
-
 class LawyerSerializer(serializers.ModelSerializer):
     # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     cases = CaseSerializer(many=True, read_only=True)
@@ -27,18 +21,25 @@ class LawyerSerializer(serializers.ModelSerializer):
 
 class ReminderSerializer(serializers.ModelSerializer):
     # Nested serializer for the case_id field
-    case_id = CaseSerializer()
+    case_id = serializers.SerializerMethodField()  
     class Meta:
         model = Reminder
-        fields = ['case_id','title','description', 'date']
+        fields = ['case_id','title','description', 'datetime', 'created_at', 'updated_at']
+        read_only_fields = ['case_id']
+
+    def get_case_id(self, obj):
+        return self.context.get('case_id', None)  
     
-# class DocumentSerializer(serializers.ModelSerializer):
-#     # Nested serializer for the case_id field
-#     case_id = CaseSerializer()
-#     class Meta:
-#         model = Document
-#         fields = ['case_id','title','description', 'file_path']
-        
+    def create(self, validated_data):
+        case_id = self.get_case_id(self.context)
+        validated_data['case_id_id'] = case_id
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['id'] = instance.id
+        return rep
+     
 class DocumentSerializer(serializers.ModelSerializer):
     case_id = serializers.SerializerMethodField()  
 
@@ -85,3 +86,7 @@ class RegisterationSerializer(serializers.ModelSerializer):
             user.avatar = avatar
             user.save()
         return user
+
+
+# class OldPasswordVerificationSerializer(serializers.Serializer):
+#     old_password = serializers.CharField(max_length=128)
