@@ -5,8 +5,8 @@ CasePulse, is a web application designed to assist legal professionals in effect
 
 ## ScreenShots
 
-![Landing Page](https://imgur.com/a/WiFV3pb.png)
-![Case Details Page](https://imgur.com/a/GGYzoZ8)
+![Landing Page](https://i.imgur.com/FS7yMK8.png)
+![Case Details Page](https://i.imgur.com/BXG9Re9.png)
 
 
 ## Technologies Used:
@@ -22,7 +22,7 @@ CasePulse, is a web application designed to assist legal professionals in effect
 
 ## Entity-Relationship Diagram (ERD)
 
-![ERD Example](https://imgur.com/a/J0WGq94)
+![ERD Example](https://i.imgur.com/0Z7a1us.png)
 
 
 #### Relationships
