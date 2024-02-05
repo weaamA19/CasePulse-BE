@@ -5,7 +5,7 @@ CasePulse, is a web application designed to assist legal professionals in effect
 
 ## ScreenShots
 
-![Landing Page](https://imgur.com/a/WiFV3pb)
+![Landing Page](https://imgur.com/a/WiFV3pb.png)
 ![Case Details Page](https://imgur.com/a/GGYzoZ8)
 
 
