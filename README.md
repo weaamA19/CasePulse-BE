@@ -3,10 +3,20 @@
 CasePulse, is a web application designed to assist legal professionals in effectively managing their legal cases.  This system provides a centralized platform for storing, tracking, and organizing crucial information related to legal matters. It's developed to enable users, especially legal professionals, to efficiently handle their legal cases. The system provides features such as adding new cases, tracking case progress, uploading documents, and setting reminders for crucial dates.
 
 
-## ScreenShots
+##  CasePulse Application Screenshots
 
 ![Landing Page](https://i.imgur.com/FS7yMK8.png)
+![Adding Case Page](https://i.imgur.com/ZO162qN.png)
+![Case Dashboard Page](https://i.imgur.com/OfOJyBZ.png)
 ![Case Details Page](https://i.imgur.com/BXG9Re9.png)
+![Inactive Case Feature](https://i.imgur.com/q6q1VCt.png)
+![Adding Document Page](https://i.imgur.com/86dhfnX.png)
+![Document Preview Page](https://i.imgur.com/EprwumB.png)
+![Updating Reminder Page](https://i.imgur.com/bf9prHn.png)
+![Today's Reminder Page](https://i.imgur.com/JaFKDL1.png)
+![Profile Page](https://i.imgur.com/X3a0Hku.png)
+![Changing Password Page](https://i.imgur.com/th6gjNC.png)
+
 
 
 ## Technologies Used:
@@ -78,7 +88,7 @@ CasePulse, is a web application designed to assist legal professionals in effect
 
 
 
-### Future Features
+## Future Features
 
 - **Version Control:** Version Control tracks document changes, allowing users to review and revert to previous versions. It ensures document accuracy, facilitates collaboration, and provides a clear overview of revisions.
 
