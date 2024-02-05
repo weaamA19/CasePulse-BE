@@ -20,7 +20,7 @@ CasePulse, is a web application designed to assist legal professionals in effect
 
 
 ## Technologies Used:
-- Django
+- Django (ex. Django Autho, CBV ..)
 - PostgreSQL
 - Postman
 - React
