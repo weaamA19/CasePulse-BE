@@ -157,7 +157,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # or the origin where your React app is hosted
+    "http://localhost:3000", 
+    'http://192.168.100.10:3000',  
 ]
 
 AUTH_USER_MODEL = 'api.Lawyer'

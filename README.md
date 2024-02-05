@@ -32,7 +32,7 @@ CasePulse, is a web application designed to assist legal professionals in effect
 
 ## Wireframes
 
-![Wireframes](https://imgur.com/a/8etEJ7D)
+![Wireframes](https://i.imgur.com/blXopLj.png)
 
 # User Stories
 
